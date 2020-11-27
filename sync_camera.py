@@ -1,62 +1,65 @@
 ## get capture and events from camera 
-
-import shutil
-import tarfile
 import os
-import os.path
-import sys, getopt
 from archive import get_archived_files
 from ssh_client import PRISMASSHClient
+from datetime import date, timedelta
 
-camera_name = "teststation"
-camera_address = "10.8.0.8"
-camera_directory_to_sync = "/prismadata/rsync"
-capture_directory = "/prismadata/capture"
-detection_directory  = "/prismadata/detection"
+cameras_to_sync = [
+    {
+        "name": "teststation", 
+        "address": "10.8.0.8", 
+        "username": "system"
+    }
+]
+camera_data_folder = "/prismadata"
+prisma_capture_diretory = "/prismadata/stations"
+prisma_events_directory = "/prismadata/detections/single"
 
-archived_already = []
+last_n_days = 5
 
-## parse arguments
-# try:
-#     opts, args = getopt.getopt(sys.argv[1:], "a:d:l:", ["address=", "directory=", "local_directory="])
+## get capture of the last n days
+month_capture_directories = [date.today().strftime("%Y%m")]
+today = date.today() #yesterday
+from_date = today - timedelta(days=last_n_days)
+time_elapsed = today - from_date
 
-# except getopt.GetoptError:
-#     print("Please provide proper arguments.")
-#     print("Usage: $python sync_camera.py --address=<camera_address> --directory=<camera_directory_to_sync> --local_directory=<local_directory>")
-#     sys.exit(2)
-# for opt, arg in opts:
-#     if opt in ("-a", "--address"):
-#         camera_address = arg
-#     if opt in ("-d", "--directory"):
-#         camera_directory_to_sync = arg
-#     if opt in ("-l", "--local_directory"):
-#         local_directory = arg
+day_capture_directories = []
+for x in range(time_elapsed.days):
+    date_to_consider = today - timedelta(days=x)
+    day_capture_directories.append(date_to_consider.strftime("%Y%m%d"))
 
-client = PRISMASSHClient(camera_address, "system")
+for camera in cameras_to_sync:
+    camera_address = camera["address"]
+    camera_username = camera["username"]
+    camera_name = camera["name"]
 
-try:
-    archived_already = get_archived_files()
+    client = PRISMASSHClient(camera_address, camera_username)
 
-    files_to_sync = client.list_from_directory(camera_directory_to_sync + "/capture")
-    for f in files_to_sync:
-        if not f in archived_already:
-            camera_directory = capture_directory + "/" + camera_name 
-            if not os.path.isdir(camera_directory):
-                os.makedirs(camera_directory)
-            remote_file = camera_directory_to_sync + "/capture/" + str(f.decode())
-            local_file = camera_directory + "/" + str(f.decode())
-            if not os.path.isfile(local_file) or not client.size_of_file(remote_file) == os.stat(local_file).st_size:
-                client.download_file(remote_file, local_file)
+    try:
+        for day in day_capture_directories:
+            camera_directory_to_sync = camera_data_folder + "/" + camera_name + "/" + camera_name + "_" + day
+            files_to_sync = client.list_from_directory(camera_directory_to_sync + "/captures")
 
-    files_to_sync = client.list_from_directory(camera_directory_to_sync + "/events")
-    for f in files_to_sync:
-        if not f in archived_already:
-            if not os.path.isdir(detection_directory):
-                os.makedirs(detection_directory)
-            remote_file = camera_directory_to_sync + "/events/" + str(f.decode())
-            local_file = detection_directory + "/" + str(f.decode())
-            if not os.path.isfile(local_file) or not client.size_of_file(remote_file) == os.stat(local_file).st_size:
-                client.download_file(remote_file, local_file)
+            for f in files_to_sync:
+                local_directory = prisma_capture_diretory + "/" + camera_name + "/" + day[:6]
+                if not os.path.isdir(local_directory):
+                    os.makedirs(local_directory)
+                remote_file = camera_directory_to_sync + "/captures/" + str(f.decode())
+                local_file = local_directory + "/" + str(f.decode())
+                if not os.path.isfile(local_file) or not client.size_of_file(remote_file) == os.stat(local_file).st_size:
+                    client.download_file(remote_file, local_file)
 
-finally:
-    client.close()
+            events_folder_to_sync = client.list_from_directory(camera_directory_to_sync + "/events")
+            for event_folder in events_folder_to_sync:
+                complete_remote_path_to_sync = camera_directory_to_sync + "/events"
+                files_to_sync = client.list_from_directory(camera_directory_to_sync + "/events/" + str(event_folder.decode()))
+                for f in files_to_sync:
+                    remote_file = camera_directory_to_sync + "/events/" + str(event_folder.decode()) + "/" + str(f.decode())
+                    local_directory = prisma_events_directory + "/" + camera_name + "/" + day[:6] + "/" + str(event_folder.decode())
+                    if not os.path.isdir(local_directory):
+                        os.makedirs(local_directory)
+                    local_file = local_directory + "/" + str(f.decode())
+                    if not os.path.isfile(local_file) or not client.size_of_file(remote_file) == os.stat(local_file).st_size:
+                        client.download_file(remote_file, local_file)
+    finally:
+        client.close()
