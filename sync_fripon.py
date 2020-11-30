@@ -8,9 +8,7 @@ from archive import get_archived_files
 from ssh_client import PRISMASSHClient
 
 cameras_to_sync = ["ITER01"]
-last_n_days = 5
-
-
+last_n_days = 2
 
 fripon_address = "ssh.fripon.org"
 fripon_username = "dgardiol"
@@ -52,7 +50,8 @@ try:
                 if check_name in day_capture_directories:
                     remote_file = list_dir + "/" + str(f.decode())
                     local_file = download_dir + "/" + str(f.decode())
-                    client.download_file(remote_file, local_file)
+                    if not os.path.isfile(local_file) or not client.size_of_file(remote_file) == os.stat(local_file).st_size:
+                        client.download_file(remote_file, local_file)
 finally:
     client.close()
 
