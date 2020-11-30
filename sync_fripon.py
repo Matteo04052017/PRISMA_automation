@@ -7,15 +7,19 @@ from datetime import date, timedelta
 from archive import get_archived_files
 from ssh_client import PRISMASSHClient
 
+cameras_to_sync = ["ITER01"]
+last_n_days = 5
+
+
+
 fripon_address = "ssh.fripon.org"
 fripon_username = "dgardiol"
 #fripon_password = None
 fripon_capture_diretory = "/data/fripon_stations"
 fripon_events_directory = "/data/fripon_detections/multiple"
-cameras_to_sync = ["ITER01"]
+
 prisma_capture_diretory = "/prismadata/stations"
 prisma_events_directory = "/prismadata/detections/multiple"
-last_n_days = 5
 
 ## get capture of the last n days
 month_capture_directories = [date.today().strftime("%Y%m")]

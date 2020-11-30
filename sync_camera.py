@@ -1,5 +1,6 @@
 ## get capture and events from camera 
-import os
+import os, sys, getopt
+import json
 from archive import get_archived_files
 from ssh_client import PRISMASSHClient
 from datetime import date, timedelta
@@ -11,11 +12,26 @@ cameras_to_sync = [
         "username": "system"
     }
 ]
+last_n_days = 5
+
+## parse arguments
+try:
+    opts, args = getopt.getopt(sys.argv[1:], "i:d:", ["input_json_file=", "days_to_sync="])
+
+except getopt.GetoptError:
+    print("Please provide proper arguments.")
+    print("Usage: $python3 sync_camera.py --i=<filename> --d=<days>")
+    sys.exit(2)
+for opt, arg in opts:
+    if opt in ("-i", "--input_json_file"):
+        with open(arg, "r") as read_file:
+            cameras_to_sync = json.load(read_file)
+    elif opt in ("-d", "--days_to_sync"):
+        last_n_days = int(arg)
+
 camera_data_folder = "/prismadata"
 prisma_capture_diretory = "/prismadata/stations"
 prisma_events_directory = "/prismadata/detections/single"
-
-last_n_days = 5
 
 ## get capture of the last n days
 month_capture_directories = [date.today().strftime("%Y%m")]
