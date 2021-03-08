@@ -7,27 +7,32 @@ from datetime import date, timedelta
 
 cameras_to_sync = [
     {
+        "name": "itsi04", 
+        "address": "10.8.0.7", 
+        "username": "matteo"
+    },
+    {
         "name": "teststation", 
-        "address": "10.8.0.8", 
-        "username": "system"
+        "address": "10.8.0.6", 
+        "username": "root"
     }
 ]
 last_n_days = 5
 
 ## parse arguments
-try:
-    opts, args = getopt.getopt(sys.argv[1:], "i:d:", ["input_json_file=", "days_to_sync="])
+# try:
+#     opts, args = getopt.getopt(sys.argv[1:], "i:d:", ["input_json_file=", "days_to_sync="])
 
-except getopt.GetoptError:
-    print("Please provide proper arguments.")
-    print("Usage: $python3 sync_camera.py --i=<filename> --d=<days>")
-    sys.exit(2)
-for opt, arg in opts:
-    if opt in ("-i", "--input_json_file"):
-        with open(arg, "r") as read_file:
-            cameras_to_sync = json.load(read_file)
-    elif opt in ("-d", "--days_to_sync"):
-        last_n_days = int(arg)
+# except getopt.GetoptError:
+#     print("Please provide proper arguments.")
+#     print("Usage: $python3 sync_camera.py --i=<filename> --d=<days>")
+#     sys.exit(2)
+# for opt, arg in opts:
+#     if opt in ("-i", "--input_json_file"):
+#         with open(arg, "r") as read_file:
+#             cameras_to_sync = json.load(read_file)
+#     elif opt in ("-d", "--days_to_sync"):
+#         last_n_days = int(arg)
 
 camera_data_folder = "/prismadata"
 prisma_capture_diretory = "/prismadata/stations"
