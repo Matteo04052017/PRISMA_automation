@@ -1,0 +1,4 @@
+FROM php:7.3.28-apache
+
+COPY ./PRISMA_BACKEND/* /var/www/html/
+

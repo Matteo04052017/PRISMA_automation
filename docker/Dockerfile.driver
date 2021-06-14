@@ -1,0 +1,30 @@
+FROM idl:0.1.0
+
+RUN apt-get update && \
+    apt-get install -y vim git libmysqlclient-dev \
+        python3.8 python3-pip python3.8-dev \
+        build-essential cron
+
+COPY PRISMA_BACKEND/installation_scripts/requirements.txt /requirements.txt 
+
+RUN python3 -m pip install setuptools
+RUN python3 -m pip install -r /requirements.txt 
+
+RUN mkdir /env 
+RUN mkdir /env/INAF_PRISMA
+
+# what is it?
+RUN mkdir /env/INAF_PRISMA/raspberry 
+
+COPY PRISMA_CONFIG/procedures_config.json /env/INAF_PRISMA/PRISMA/procedures_config.json
+COPY PRISMA_FREETURE_DRIVER/* /env/INAF_PRISMA/PRISMA/PRISMA_FREETURE_DRIVER/
+COPY PRISMA_EVENT_PROCESSING/* /env/INAF_PRISMA/PRISMA/PRISMA_EVENT_PROCESSING/
+COPY PRISMA_CALIBRATION/* /env/INAF_PRISMA/PRISMA/PRISMA_CALIBRATION/
+
+RUN python3 -m pip install -r /env/INAF_PRISMA/PRISMA/PRISMA_FREETURE_DRIVER/requirements.txt 
+
+COPY PRISMA_BACKEND/installation_scripts/inaf_crontab_setup.sh /inaf_crontab_setup.sh
+
+RUN bash /inaf_crontab_setup.sh
+
+CMD cron

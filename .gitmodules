@@ -1,0 +1,18 @@
+[submodule "PRISMA_BACKEND"]
+	path = PRISMA_BACKEND
+	url = https://github.com/n3srl/PRISMA_BACKEND.git
+[submodule "PRISMA_DOCS"]
+	path = PRISMA_DOCS
+	url = https://github.com/n3srl/PRISMA_DOCS.git
+[submodule "PRISMA_FREETURE_DRIVER"]
+	path = PRISMA_FREETURE_DRIVER
+	url = https://github.com/n3srl/PRISMA_FREETURE_DRIVER.git
+[submodule "PRISMA_CALIBRATION"]
+	path = PRISMA_CALIBRATION
+	url = https://github.com/n3srl/PRISMA_CALIBRATION.git
+[submodule "PRISMA_EVENT_PROCESSING"]
+	path = PRISMA_EVENT_PROCESSING
+	url = https://github.com/n3srl/PRISMA_EVENT_PROCESSING.git
+[submodule "PRISMA_CONFIG"]
+	path = PRISMA_CONFIG
+	url = https://github.com/n3srl/PRISMA_CONFIG.git
