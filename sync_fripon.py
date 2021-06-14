@@ -1,16 +1,18 @@
 # get capture and events from ftp fripon
 
-import shutil
-import tarfile
+# import shutil
+# import tarfile
 import os
+import time
+import datetime
 from datetime import date, timedelta
-from archive import get_archived_files
+# from archive import get_archived_files
 from ssh_client import PRISMASSHClient
 
-cameras_to_sync = ["ITER02"]
-last_n_days = 7
-# cameras_to_sync = ["ITCL01", "ITCP01", "ITCP02", "ITCP03", "ITCP04", "ITER01", "ITER02", "ITER03", "ITER04", "ITER05", "ITER06", "ITER07", "ITER08", "ITFV01", "ITFV02", "ITLA01", "ITLA02", "ITLI01", "ITLI02", "ITLO01", "ITLO02", "ITLO03", "ITLO04", "ITLO05", "ITMA01", "ITMA02", "ITMA03", "ITPI01", "ITPI02", "ITPI03",
-#                    "ITPI04", "ITPI05", "ITPI06", "ITPU01", "ITPU02", "ITPU03", "ITSA01", "ITSA02", "ITSA03", "ITSI01", "ITSI02", "ITSI03", "ITTA01", "ITTA02", "ITTN02", "ITTO01", "ITTO02", "ITTO03", "ITTO04", "ITTO05", "ITTO06", "ITTO07", "ITUM01", "ITUM02", "ITVA01", "ITVE01", "ITVE02", "ITVE03", "ITVE04", "ITVE05", "ITVE06"]
+# cameras_to_sync = ["ITER02"]
+last_n_days = 1
+cameras_to_sync = ["ITCL01", "ITCP01", "ITCP02", "ITCP03", "ITCP04", "ITER01", "ITER02", "ITER03", "ITER04", "ITER05", "ITER06", "ITER07", "ITER08", "ITFV01", "ITFV02", "ITLA01", "ITLA02", "ITLI01", "ITLI02", "ITLO01", "ITLO02", "ITLO03", "ITLO04", "ITLO05", "ITMA01", "ITMA02", "ITMA03", "ITPI01", "ITPI02", "ITPI03",
+                   "ITPI04", "ITPI05", "ITPI06", "ITPU01", "ITPU02", "ITPU03", "ITSA01", "ITSA02", "ITSA03", "ITSI01", "ITSI02", "ITSI03", "ITTA01", "ITTA02", "ITTN02", "ITTO01", "ITTO02", "ITTO03", "ITTO04", "ITTO05", "ITTO06", "ITTO07", "ITUM01", "ITUM02", "ITVA01", "ITVE01", "ITVE02", "ITVE03", "ITVE04", "ITVE05", "ITVE06"]
 # last_n_days = 5
 
 ## parse arguments
@@ -33,6 +35,9 @@ fripon_events_directory = "/data/fripon_detections/multiple"
 
 prisma_capture_diretory = "/prismadata/stations"
 prisma_events_directory = "/prismadata/detections/multiple"
+
+st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+print("Start execution at " + st)
 
 # get capture of the last n days
 month_capture_directories = [date.today().strftime("%Y%m")]
@@ -68,6 +73,10 @@ try:
                     remote_file = list_dir + "/" + str(f.decode())
                     local_file = download_dir + "/" + str(f.decode())
                     if not os.path.isfile(local_file) or not client.size_of_file(remote_file) == os.stat(local_file).st_size:
+                        print("Downloading %s", remote_file)
                         client.download_file(remote_file, local_file)
 finally:
     client.close()
+
+st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+print("Stop execution at " + st)

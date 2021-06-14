@@ -1,4 +1,12 @@
-FROM php:7.3.28-apache
+FROM php:7.4-apache-buster
 
-COPY ./PRISMA_BACKEND/* /var/www/html/
+COPY PRISMA_BACKEND /var/www/html
 
+COPY docker/www_files/config.php /var/www/html/config/config.php
+
+# COPY docker/driver/inaf_crontab_setup.sh /var/www/html/installation_scripts/inaf_crontab_setup.sh
+
+RUN a2enmod rewrite
+
+RUN docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql
+RUN docker-php-ext-install gettext

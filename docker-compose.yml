@@ -8,25 +8,27 @@ services:
     volumes:
       - /prisma_volumes/mysql:/var/lib/mysql
     environment:
-      - MYSQL_USER="prisma"
-      - MYSQL_PASSWORD="zC3!#A#h2bEEKENY"
-      - MYSQL_ROOT_PASSWORD="secret"
+      - MYSQL_USER=prisma
+      - MYSQL_PASSWORD=prismasecret
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=inaf_prisma
   web:
     image: webserver:0.1.0
     ports:
       - "8080:80"
     depends_on:
       - db
-  driver:
-    image: prismadriver:0.1.0
-    volumes:
-        /prismadata:/env/INAF_PRISMA/raspberry
-    depends_on:
-        - db
+#   driver:
+#     image: prismadriver:0.1.0
+#     volumes:
+#         - /prismadata:/env/INAF_PRISMA/raspberry
+#     depends_on:
+#         - db
   sync_fripon:
     image: sync_fripon:0.1.0
     # data will be downloaded in the following 2 directories:
     # /prismadata/stations -- detections
     # /prismadata/detections/multiple -- events
     volumes:
+        - ${HOME}/.ssh:/root/.ssh
         - /prismadata:/prismadata

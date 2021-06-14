@@ -23,7 +23,7 @@ COPY PRISMA_CALIBRATION/* /env/INAF_PRISMA/PRISMA/PRISMA_CALIBRATION/
 
 RUN python3 -m pip install -r /env/INAF_PRISMA/PRISMA/PRISMA_FREETURE_DRIVER/requirements.txt 
 
-COPY PRISMA_BACKEND/installation_scripts/inaf_crontab_setup.sh /inaf_crontab_setup.sh
+COPY docker/driver/inaf_crontab_setup.sh /inaf_crontab_setup.sh
 
 RUN bash /inaf_crontab_setup.sh
 

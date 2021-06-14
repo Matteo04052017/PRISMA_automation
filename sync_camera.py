@@ -7,9 +7,16 @@ from datetime import date, timedelta
 
 cameras_to_sync = [
     {
+        "name": "itsi04", 
+        "address": "10.8.0.7", 
+        "username": "matteo",
+        "acq_regulat_prefix": "racalmuto"
+    },
+    {
         "name": "teststation", 
-        "address": "10.8.0.8", 
-        "username": "system"
+        "address": "10.8.0.6", 
+        "username": "root",
+        "acq_regulat_prefix": "teststation"
     }
 ]
 last_n_days = 5
@@ -48,12 +55,13 @@ for camera in cameras_to_sync:
     camera_address = camera["address"]
     camera_username = camera["username"]
     camera_name = camera["name"]
+    acq_regulat_prefix = camera["acq_regulat_prefix"]
 
     client = PRISMASSHClient(camera_address, camera_username)
 
     try:
         for day in day_capture_directories:
-            camera_directory_to_sync = camera_data_folder + "/" + camera_name + "/" + camera_name + "_" + day
+            camera_directory_to_sync = camera_data_folder + "/" + acq_regulat_prefix + "/" + camera_name + "_" + day
             files_to_sync = client.list_from_directory(camera_directory_to_sync + "/captures")
 
             for f in files_to_sync:
