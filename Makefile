@@ -11,7 +11,7 @@ build_idl:
 submodule:
 	@git submodule update --init --recursive
 
-build_driver: submodule
+build_driver: submodule 
 	@docker build . -t prismadriver:$(PRISMA_DRIVER_VER) -f docker/Dockerfile.driver
 
 build_prisma_db: submodule
