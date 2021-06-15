@@ -23,18 +23,7 @@ build_webserver: submodule
 build_sync_fripon: submodule
 	@docker build . -t sync_fripon:$(SYNC_FRIPON_VER) -f docker/Dockerfile.sync
 
-# run_prisma_db:
-# 	@docker run --name prismadb prismadb:$(PRISMA_DB_VER) \
-# 		-v /my/own/datadir:/var/lib/mysql \
-# 		-p 3306:3306 -d \
-# 		--env MYSQL_USER=$(MYSQL_USER) \
-# 		--env MYSQL_PASSWORD=$(MYSQL_PASSWORD) \
-# 		--env MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) 
-
 build: submodule build_idl build_driver build_sync_fripon build_prisma_db build_webserver
-
-# run_webserver:
-# 	docker run --name webserver webserver:$(WEBSERVER_VER) -p 8080:80 
 
 start:
 	docker-compose up -d --remove-orphans
