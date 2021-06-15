@@ -10,7 +10,7 @@ if ($PROD) {
     $db_name = 'inaf_prisma';
     $db_user = 'prisma';
     $db_pass = 'prismasecret';
-    $db_host = '172.29.144.1';
+    $db_host = '192.168.52.56';
     $db_port = '3306';
 
     date_default_timezone_set('UTC');
@@ -33,7 +33,7 @@ if ($PROD) {
     $db_name = 'inaf_prisma';
     $db_user = 'root';
     $db_pass = 'secret';
-    $db_host = '172.29.144.1';
+    $db_host = '192.168.52.56';
     $db_port = '3306';
 
     date_default_timezone_set('UTC');

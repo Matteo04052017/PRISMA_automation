@@ -7,7 +7,7 @@
         "db_config": {
             "user": "prisma",
             "password": "prismasecret",
-            "host": "172.29.144.1",
+            "host": "192.168.52.56",
             "database": "inaf_prisma"
         },
         "LOG_MESSAGE_PREFIX": "[EventGeneration] ",
@@ -21,7 +21,7 @@
         "db_config": {
             "user": "prisma",
             "password": "prismasecret",
-            "host": "172.29.144.1",
+            "host": "192.168.52.56",
             "database": "inaf_prisma"
         },
         "LOG_MESSAGE_PREFIX": "[EventProcessing] ",
@@ -35,7 +35,7 @@
         "db_config": {
             "user": "prisma",
             "password": "prismasecret",
-            "host": "172.29.144.1",
+            "host": "192.168.52.56",
             "database": "inaf_prisma"
         },
         "LOG_MESSAGE_PREFIX": "[Calibration] ",
