@@ -18,12 +18,13 @@ services:
       - "8080:80"
     depends_on:
       - db
-#   driver:
-#     image: prismadriver:0.1.0
-#     volumes:
-#         - /prismadata:/env/INAF_PRISMA/raspberry
-#     depends_on:
-#         - db
+  driver:
+    image: prismadriver:0.1.0
+    volumes:
+        - /prismadata:/env/INAF_PRISMA/raspberry
+        - /prismadata/stations:/env/INAF_PRISMA/PRISMA/workspace/events
+    depends_on:
+        - db
   sync_fripon:
     image: sync_fripon:0.1.0
     # data will be downloaded in the following 2 directories:

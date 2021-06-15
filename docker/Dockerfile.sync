@@ -10,7 +10,7 @@ RUN apt-get update && \
 
 RUN touch /var/log/cron.log
 
-RUN (crontab -u root -l; echo "* * * * * echo hello >> /var/log/cron.log") | crontab -u root -
+RUN echo "0,30 * * * *   root    python3 /sync_fripon.py >> /var/log/cron.log" >> /etc/crontab
 
 CMD cron && tail -f /var/log/cron.log
 

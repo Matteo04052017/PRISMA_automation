@@ -16,15 +16,21 @@ RUN mkdir /env/INAF_PRISMA
 # what is it?
 RUN mkdir /env/INAF_PRISMA/raspberry 
 
-COPY PRISMA_CONFIG/procedures_config.json /env/INAF_PRISMA/PRISMA/procedures_config.json
-COPY PRISMA_FREETURE_DRIVER/* /env/INAF_PRISMA/PRISMA/PRISMA_FREETURE_DRIVER/
-COPY PRISMA_EVENT_PROCESSING/* /env/INAF_PRISMA/PRISMA/PRISMA_EVENT_PROCESSING/
-COPY PRISMA_CALIBRATION/* /env/INAF_PRISMA/PRISMA/PRISMA_CALIBRATION/
+COPY docker/driver/procedures_config.json /env/INAF_PRISMA/PRISMA/procedures_config.json
+COPY PRISMA_FREETURE_DRIVER /env/INAF_PRISMA/PRISMA/PRISMA_FREETURE_DRIVER
+COPY PRISMA_EVENT_PROCESSING /env/INAF_PRISMA/PRISMA/PRISMA_EVENT_PROCESSING
+COPY PRISMA_CALIBRATION /env/INAF_PRISMA/PRISMA/PRISMA_CALIBRATION
 
 RUN python3 -m pip install -r /env/INAF_PRISMA/PRISMA/PRISMA_FREETURE_DRIVER/requirements.txt 
 
-COPY docker/driver/inaf_crontab_setup.sh /inaf_crontab_setup.sh
+RUN echo "3,13,23,33,43,53 0 * * *    root    cd /env/INAF_PRISMA/PRISMA/PRISMA_FREETURE_DRIVER/ && python3 EventGeneration.py >> /env/INAF_PRISMA/logs/PRISMA_event_generation.log 2>&1" >> /etc/crontab
+RUN echo "6,16,26,36,46,56    root    cd /env/INAF_PRISMA/PRISMA/PRISMA_CALIBRATION/ && python3 ProcessCalibration.py >> /env/INAF_PRISMA/logs/PRISMA_calibration.log 2>&1" >> /etc/crontab
+RUN echo "9,19,29,39,49,59    root    sleep 300 && cd /env/INAF_PRISMA/PRISMA/PRISMA_EVENT_PROCESSING/ && python3 ProcessEvent.py >> /env/INAF_PRISMA/logs/PRISMA_event_processing.log 2>&1" >> /etc/crontab
 
-RUN bash /inaf_crontab_setup.sh
+RUN mkdir /env/INAF_PRISMA/logs/
+RUN touch /env/INAF_PRISMA/logs/PRISMA_event_processing.log
+RUN touch /env/INAF_PRISMA/logs/PRISMA_event_generation.log
+RUN touch /env/INAF_PRISMA/logs/PRISMA_calibration.log
+RUN touch /var/log/cron.log
 
-CMD cron
+CMD cron && tail -f /var/log/cron.log /env/INAF_PRISMA/logs/PRISMA_event_generation.log /env/INAF_PRISMA/logs/PRISMA_calibration.log /env/INAF_PRISMA/logs/PRISMA_event_processing.log
