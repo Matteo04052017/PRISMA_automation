@@ -5,12 +5,8 @@ RUN pip install paramiko
 COPY ssh_client.py /ssh_client.py
 COPY sync_fripon.py /sync_fripon.py
 
-RUN apt-get update && \
-    apt-get install -y cron
-
 RUN touch /var/log/cron.log
 
-RUN echo "0,30 * * * *   root    python3 /sync_fripon.py >> /var/log/cron.log" >> /etc/crontab
+CMD ["python3","-u", "/sync_fripon.py"]
 
-CMD cron && tail -f /var/log/cron.log
 

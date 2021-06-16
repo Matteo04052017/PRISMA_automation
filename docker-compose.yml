@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.3"
 
 services:
   db:
@@ -31,6 +31,7 @@ services:
   sync_fripon:
     image: sync_fripon:0.1.0
     restart: always
+    command: ["python3", "-u", "/sync_fripon.py"]  
     # data will be downloaded in the following 2 directories:
     # /prismadata/stations -- detections
     # /prismadata/detections/multiple -- events
