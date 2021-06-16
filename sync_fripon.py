@@ -38,7 +38,7 @@ cameras_to_sync = ["ITCL01", "ITCP01", "ITCP02", "ITCP03", "ITCP04", "ITER01", "
 
 def get_file_to_sync(client):
     result = {}
-    logger.info("Get capture of the last n days")
+    logger.info("Get capture of the last %s days", last_n_days)
     month_capture_directories = [date.today().strftime("%Y%m")]
     to_date = date.today() - timedelta(days=1)  # yesterday
     from_date = to_date - timedelta(days=last_n_days)
@@ -53,11 +53,12 @@ def get_file_to_sync(client):
         day_capture_directories.append(date_to_consider.strftime("%Y%m%d"))
 
     for camera in cameras_to_sync:
+        logger.info("Processing camera %s", camera)
         for capture_dir in month_capture_directories:
             list_dir = fripon_capture_diretory + "/" + \
                 str(camera) + "/" + str(capture_dir)
             all_capture_files = client.list_from_directory(list_dir)
-            logger.debug("directory %s", list_dir)
+            logger.info("Processing directory %s", list_dir)
             download_dir = prisma_capture_diretory + \
                 "/" + str(camera) + "/" + str(capture_dir)
             if not os.path.isdir(download_dir):
@@ -68,16 +69,17 @@ def get_file_to_sync(client):
                 if check_name in day_capture_directories:
                     remote_file = list_dir + "/" + str(f.decode())
                     local_file = download_dir + "/" + str(f.decode())
-                    logger.debug("file %s", remote_file)
-                    if not os.path.isfile(local_file) or not client.size_of_file(remote_file) == os.stat(local_file).st_size:
-                        result[remote_file] = local_file
-    logger.info("Get capture of the last n days...DONE")
+                    logger.debug("Processing file %s", remote_file)
+                    result[remote_file] = local_file
+    logger.info("Get capture of the last %s days...DONE", last_n_days)
     return result
 
 async def download_one(client, remote_file, local_file, sem):
     async with sem:
-        logger.info("Downloading %s", remote_file)
-        await client.download_file(remote_file, local_file)
+        if not os.path.isfile(local_file):
+            logger.info("Downloading %s", remote_file)
+            await client.download_file(remote_file, local_file)
+            logger.info("DONE")
 
 async def main_loop():
     while True:
@@ -96,6 +98,8 @@ async def main_loop():
 
             for f in files2download:
                 tasks.append(ensure_future(download_one(client, f, files2download[f], sem)))
+
+            logger.info("Start downloading")
 
             await gather(*tasks)
         finally:
