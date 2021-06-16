@@ -12,7 +12,12 @@ from datetime import date, timedelta
 from ssh_client import PRISMASSHClient
 from asyncio import ensure_future, gather, run, Semaphore
 
-logging.basicConfig(level=logging.CRITICAL)
+# create logger
+logger = logging.getLogger('sync_fripon_logger')
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+logger.addHandler(ch)
 
 SLEEP_TIME = 1800 # 30 minutes
 DOWNLOAD_LIMIT = 5
@@ -52,7 +57,7 @@ def get_file_to_sync(client):
             list_dir = fripon_capture_diretory + "/" + \
                 str(camera) + "/" + str(capture_dir)
             all_capture_files = client.list_from_directory(list_dir)
-            logging.debug("directory %s", list_dir)
+            logger.debug("directory %s", list_dir)
             download_dir = prisma_capture_diretory + \
                 "/" + str(camera) + "/" + str(capture_dir)
             if not os.path.isdir(download_dir):
@@ -63,21 +68,21 @@ def get_file_to_sync(client):
                 if check_name in day_capture_directories:
                     remote_file = list_dir + "/" + str(f.decode())
                     local_file = download_dir + "/" + str(f.decode())
-                    logging.debug("file %s", remote_file)
+                    logger.debug("file %s", remote_file)
                     if not os.path.isfile(local_file) or not client.size_of_file(remote_file) == os.stat(local_file).st_size:
                         result[remote_file] = local_file
     return result
 
 async def download_one(client, remote_file, local_file, sem):
     async with sem:
-        logging.info("Downloading %s", remote_file)
+        logger.info("Downloading %s", remote_file)
         await client.download_file(remote_file, local_file)
 
 async def main_loop():
     while True:
         
         st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-        logging.info("Start execution at " + st)
+        logger.info("Start execution at " + st)
         
         sem = Semaphore(DOWNLOAD_LIMIT)
         tasks = list()
@@ -86,7 +91,7 @@ async def main_loop():
             client = PRISMASSHClient(fripon_address, user=fripon_username)
             files2download = get_file_to_sync(client)
 
-            logging.info("File to download: %s", len(files2download))
+            logger.info("File to download: %s", len(files2download))
 
             for f in files2download:
                 tasks.append(ensure_future(download_one(client, f, files2download[f], sem)))
@@ -96,7 +101,7 @@ async def main_loop():
             client.close()
 
         st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-        logging.info("Stop execution at " + st)
+        logger.info("Stop execution at " + st)
         time.sleep(SLEEP_TIME)
 
 
