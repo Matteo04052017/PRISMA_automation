@@ -14,9 +14,9 @@ from asyncio import ensure_future, gather, run, Semaphore
 
 # create logger
 logger = logging.getLogger('sync_fripon_logger')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
+ch.setLevel(logging.INFO)
 logger.addHandler(ch)
 
 SLEEP_TIME = 1800 # 30 minutes
@@ -38,7 +38,7 @@ cameras_to_sync = ["ITCL01", "ITCP01", "ITCP02", "ITCP03", "ITCP04", "ITER01", "
 
 def get_file_to_sync(client):
     result = {}
-    # get capture of the last n days
+    logger.info("Get capture of the last n days")
     month_capture_directories = [date.today().strftime("%Y%m")]
     to_date = date.today() - timedelta(days=1)  # yesterday
     from_date = to_date - timedelta(days=last_n_days)
@@ -71,6 +71,7 @@ def get_file_to_sync(client):
                     logger.debug("file %s", remote_file)
                     if not os.path.isfile(local_file) or not client.size_of_file(remote_file) == os.stat(local_file).st_size:
                         result[remote_file] = local_file
+    logger.info("Get capture of the last n days...DONE")
     return result
 
 async def download_one(client, remote_file, local_file, sem):
