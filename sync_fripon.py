@@ -240,6 +240,8 @@ async def main_loop():
             for f in events:
                 tasks.append(ensure_future(download_one(client, f["remote_file"], f["local_file"], sem)))
 
+            logger.info("Start downloading")
+
             await gather(*tasks)
         finally:
             client.close()
