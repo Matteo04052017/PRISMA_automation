@@ -1,6 +1,17 @@
-FROM python:3.8-slim
+FROM ubuntu:20.04
 
-RUN pip install paramiko
+RUN apt-get update && \
+    apt-get install -y libmysqlclient-dev \
+        python3.8 python3-pip python3.8-dev \
+        build-essential cron
+
+COPY docker/driver/procedures_config.json /procedures_config.json
+COPY PRISMA_BACKEND/installation_scripts/requirements.txt /requirements.txt 
+
+RUN python3 -m pip install setuptools
+RUN python3 -m pip install -r /requirements.txt 
+RUN python3 -m pip install paramiko
+RUN python3 -m pip install setuptools-rust
 
 COPY ssh_client.py /ssh_client.py
 COPY sync_fripon.py /sync_fripon.py
