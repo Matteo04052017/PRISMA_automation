@@ -29,10 +29,12 @@ fripon_address = "ssh.fripon.org"
 fripon_username = "dgardiol"
 #fripon_password = None
 fripon_capture_diretory = "/data/fripon_stations"
+fripon_single_events_directory = "/data/fripon_detections/single"
 fripon_events_directory = "/data/fripon_detections/multiple"
 
 prisma_capture_diretory = "/prismadata/stations"
 prisma_events_directory = "/prismadata/detections/multiple"
+prisma_single_events_directory = "/prismadata/detections/single"
 
 last_n_days = 30
 # cameras_to_sync = ["ITCL01", "ITCP01", "ITCP02", "ITCP03", "ITCP04", "ITER01", "ITER02", "ITER03", "ITER04", "ITER05", "ITER06", "ITER07", "ITER08", "ITFV01", "ITFV02", "ITLA01", "ITLA02", "ITLI01", "ITLI02", "ITLO01", "ITLO02", "ITLO03", "ITLO04", "ITLO05", "ITMA01", "ITMA02", "ITMA03", "ITPI01", "ITPI02", "ITPI03",
@@ -77,7 +79,7 @@ def get_camera_list():
 
 
 def get_multiple_events_to_sync(client, camera_names):
-    logger.info("Get events of the last %s days", last_n_days)
+    logger.info("Get multiple events of the last %s days", last_n_days)
     month_capture_directories = [date.today().strftime("%Y%m")]
     to_date = date.today() - timedelta(days=1)  # yesterday
     from_date = to_date - timedelta(days=last_n_days)
@@ -92,7 +94,7 @@ def get_multiple_events_to_sync(client, camera_names):
 
     for capture_dir in month_capture_directories:
         events_dir = fripon_events_directory + "/" + str(capture_dir)
-        logger.info("Processing directory %s", events_dir)
+        logger.info("Processing multiple events directory %s", events_dir)
         all_events_dirs = client.list_from_directory(events_dir)
         for multiple_event_dir in all_events_dirs:
             # d like 20210616T222449_UT
@@ -102,7 +104,7 @@ def get_multiple_events_to_sync(client, camera_names):
                 detections = client.list_from_directory(detections_dir)
                 for detection in detections:
                     # detection CASERTA_20210524T015103_UT
-                    logger.info("Processing detection %s", detection.decode())
+                    logger.info("Processing multiple event detection %s", detection.decode())
                     camera_name = detection.decode().split('_')[0]
                     if camera_name in camera_names:
                         download_dir = fripon_events_directory + "/" + str(capture_dir) +  "/" + multiple_event_dir.decode() + "/" + detection.decode()
@@ -131,7 +133,7 @@ def get_multiple_events_to_sync(client, camera_names):
     logger.info("Get events of the last %s days...DONE", last_n_days)
 
 def get_single_events_to_sync(client, cameras_to_sync):
-    logger.info("Get events of the last %s days", last_n_days)
+    logger.info("Get single events of the last %s days", last_n_days)
     month_capture_directories = [date.today().strftime("%Y%m")]
     to_date = date.today() - timedelta(days=1)  # yesterday
     from_date = to_date - timedelta(days=last_n_days)
@@ -145,15 +147,15 @@ def get_single_events_to_sync(client, cameras_to_sync):
         day_capture_directories.append(date_to_consider.strftime("%Y%m%d"))
 
     for camera in cameras_to_sync:
-        logger.info("Processing camera events %s", camera)
+        logger.info("Processing single camera events %s", camera)
         for capture_dir in month_capture_directories:
-            list_dir = fripon_events_directory + "/" + \
+            list_dir = fripon_single_events_directory + "/" + \
                 str(camera) + "/" + str(capture_dir)
-            logger.info("Processing directory %s", list_dir)
+            logger.info("Processing single event directory %s", list_dir)
             
             all_events_dirs = client.list_from_directory(list_dir)
             
-            download_dir = prisma_events_directory + \
+            download_dir = prisma_single_events_directory + \
                 "/" + str(camera) + "/" + str(capture_dir)
             if not os.path.isdir(download_dir):
                 os.makedirs(download_dir)
@@ -173,7 +175,7 @@ def get_single_events_to_sync(client, cameras_to_sync):
                         local_file = local_dir + "/" + str(f.decode())
                         logger.debug("Processing file %s", remote_file)
                         yield { "remote_file" : remote_file, "local_file":local_file }
-    logger.info("Get events of the last %s days...DONE", last_n_days)
+    logger.info("Get single events of the last %s days...DONE", last_n_days)
 
 
 def get_captures_to_sync(client, cameras_to_sync):
@@ -191,12 +193,12 @@ def get_captures_to_sync(client, cameras_to_sync):
         day_capture_directories.append(date_to_consider.strftime("%Y%m%d"))
 
     for camera in cameras_to_sync:
-        logger.info("Processing camera %s", camera)
+        logger.info("Processing camera for capture %s", camera)
         for capture_dir in month_capture_directories:
             list_dir = fripon_capture_diretory + "/" + \
                 str(camera) + "/" + str(capture_dir)
             all_capture_files = client.list_from_directory(list_dir)
-            logger.info("Processing directory %s", list_dir)
+            logger.info("Processing capture directory %s", list_dir)
             download_dir = prisma_capture_diretory + \
                 "/" + str(camera) + "/" + str(capture_dir)
             if not os.path.isdir(download_dir):
@@ -207,7 +209,7 @@ def get_captures_to_sync(client, cameras_to_sync):
                 if check_name in day_capture_directories:
                     remote_file = list_dir + "/" + str(f.decode())
                     local_file = download_dir + "/" + str(f.decode())
-                    logger.debug("Processing file %s", remote_file)
+                    logger.debug("Processing capture file %s", remote_file)
                     yield { "remote_file" : remote_file, "local_file":local_file }
     logger.info("Get capture of the last %s days...DONE", last_n_days)
 
@@ -235,6 +237,10 @@ async def main_loop():
             captures = get_captures_to_sync(client, cameras_to_sync)
             for f in captures:
                 tasks.append(ensure_future(download_one(client, f["remote_file"], f["local_file"], sem)))
+
+            single = get_single_events_to_sync(client, cameras_to_sync)
+            for f in single:
+                tasks.append(ensure_future(download_one(client, f["remote_file"], f["local_file"], sem)))
             
             events = get_multiple_events_to_sync(client, camera_names)
             for f in events:
@@ -243,6 +249,8 @@ async def main_loop():
             logger.info("Start downloading")
 
             await gather(*tasks)
+
+            logger.info("Done downloading")
         finally:
             client.close()
 
