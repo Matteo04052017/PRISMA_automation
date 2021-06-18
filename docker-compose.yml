@@ -24,7 +24,12 @@ services:
     image: idl:0.1.0
     restart: always
     volumes:
-      - /prismadata:/prismadata
+      - /prismadata/stations:/astrometry/workspace/captures
+      - /prismadata/detections/multiple:/astrometry/workspace/events
+      - /prismadata/runtime:/astrometry/workspace/runtime
+      - /prismadata/settings:/astrometry/workspace/settings
+      - /prismadata/astrometry:/astrometry/workspace/astrometry
+      - /prismadata/results:/astrometry/workspace/results
   sync_fripon:
     image: sync_fripon:0.1.0
     restart: always
