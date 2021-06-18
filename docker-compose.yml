@@ -25,7 +25,8 @@ services:
     restart: always
     volumes:
         - /prismadata:/env/INAF_PRISMA/raspberry
-        - /prismadata/stations:/env/INAF_PRISMA/PRISMA/workspace/events
+        - /prismadata/stations:/env/INAF_PRISMA/PRISMA/workspace/captures
+        - /prismadata/detections/multiple:/env/INAF_PRISMA/PRISMA/workspace/events
     depends_on:
         - db
   sync_fripon:

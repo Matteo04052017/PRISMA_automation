@@ -42,7 +42,7 @@ last_n_days = 30
 def get_camera_list():
     camera_codes = []
     camera_names = []
-    with open('docker/driver/procedures_config.json') as pc:
+    with open('procedures_config.json') as pc:
         default_config = json.load(pc)
 
     config = default_config['process_calibration']['db_config']
