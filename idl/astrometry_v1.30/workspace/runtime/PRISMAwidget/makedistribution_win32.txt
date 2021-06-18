@@ -1,0 +1,32 @@
+.full_reset_session
+.r PRISMAwidget.pro
+.r PW_autopos.pro
+.r PW_draw_image.pro
+.r PW_loadpos.pro
+.r PW_open_image.pro
+.r PWwidget_cleanup.pro
+.r PWwidget_draw.pro
+.r PWwidget_event.pro
+.r PWwidget_file.pro
+.r PWwidget_interpolation.pro
+.r PWwidget_logscale.pro
+.r PWwidget_modelist.pro
+.r PWwidget_negative.pro
+.r PWwidget_filename.pro
+.r PWwidget_playmovie.pro
+.r PWwidget_positions.pro
+.r PWwidget_prevnextimage.pro
+.r PWwidget_slider_box.pro
+.r PWwidget_slider_minmax.pro
+.r PWwidget_slider_zoom.pro
+.r PWwidget_zoom.pro
+RESOLVE_ALL
+SAVE, /ROUTINES, FILENAME = 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\PRISMAwidget\PRISMAwidget.sav'
+FILE_DELETE, 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\PRISMAwidget\distribution_win32\PRISMAwidget', /recursive
+FILE_DELETE, 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\PRISMAwidget\distribution_win32\PRISMAwidget.rar', /recursive
+MAKE_RT, 'PRISMAwidget', 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\PRISMAwidget\distribution_win32', SAVEFILE='F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\PRISMAwidget\PRISMAwidget.sav', /WIN32
+FILE_COPY, 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\settings\solutions.ini', 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\PRISMAwidget\distribution_win32\PRISMAwidget\PRISMAcamera.txt'
+FILE_COPY, 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\settings\logo_black.png', 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\PRISMAwidget\distribution_win32\PRISMAwidget\PRISMAlogo_black.png'
+FILE_COPY, 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\settings\logo_white.png', 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\PRISMAwidget\distribution_win32\PRISMAwidget\PRISMAlogo_white.png'
+FILE_DELETE, 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\PRISMAwidget\distribution_win32\PRISMAwidget\splash.bmp'
+FILE_COPY, 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\splash_logo.bmp', 'F:\Lavoro\StageOATO\IDLWorkspace84\PRISMA\runtime\PRISMAwidget\distribution_win32\PRISMAwidget\splash.bmp'

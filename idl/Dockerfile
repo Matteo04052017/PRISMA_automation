@@ -10,3 +10,8 @@ RUN cd /idl_install && chmod +x install.sh && ./install.sh -s < silent/idl_answe
 
 RUN echo http://ia2-doc.oats.inaf.it:7070/fne/bin/capability > /usr/local/harris/license/o_licenseserverurl.txt
 
+ENV PATH=/usr/local/harris/idl/bin/:$PATH
+
+COPY astrometry_v1.30 /astrometry_v1.30
+
+
