@@ -12,6 +12,6 @@ RUN echo http://ia2-doc.oats.inaf.it:7070/fne/bin/capability > /usr/local/harris
 
 ENV PATH=/usr/local/harris/idl/bin/:$PATH
 
-COPY astrometry_v1.30 /astrometry_v1.30
+COPY astrometry_v1.30 /astrometry
 
-
+CMD ["sleep","infinity"]
