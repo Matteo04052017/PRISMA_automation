@@ -1,18 +1,9 @@
 FROM idl:0.1.0
 
 RUN apt-get update && \
-    apt-get install -y vim git libmysqlclient-dev \
-        python3.8 python3-pip python3.8-dev \
-        build-essential cron
+    apt-get install -y vim git \
+        python3.8 python3-pip python3.8-dev
 
+COPY src /prisma_repo
 
-COPY PRISMA_BACKEND/installation_scripts/requirements.txt /requirements.txt 
-RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install setuptools
-RUN python3 -m pip install -r /requirements.txt 
-RUN python3 -m pip install paramiko
-
-COPY docker/driver/procedures_config.json /astrometry/workspace/procedures_config.json
-COPY calibrate.py /astrometry/workspace/calibrate.py
-
-CMD ["sleep","infinity"]
+CMD ["python3","-u", "/astrometry/workspace/run_calibration.py"]

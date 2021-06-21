@@ -1,35 +1,6 @@
 version: "3.3"
 
 services:
-  db:
-    image: prismadb:0.1.0
-    restart: always
-    ports: 
-        - "3306:3306"
-    volumes:
-      - /prisma_volumes/mysql:/var/lib/mysql
-    environment:
-      - MYSQL_USER=prisma
-      - MYSQL_PASSWORD=prismasecret
-      - MYSQL_ROOT_PASSWORD=secret
-      - MYSQL_DATABASE=inaf_prisma
-  web:
-    image: webserver:0.1.0
-    restart: always
-    ports:
-      - "8080:80"
-    depends_on:
-      - db
-  idl:
-    image: idl:0.1.0
-    restart: always
-    volumes:
-      - /prismadata/stations:/astrometry/workspace/captures
-      - /prismadata/detections/multiple:/astrometry/workspace/events
-      - /prismadata/runtime:/astrometry/workspace/runtime
-      - /prismadata/settings:/astrometry/workspace/settings
-      - /prismadata/astrometry:/astrometry/workspace/astrometry
-      - /prismadata/results:/astrometry/workspace/results
   rsync_captures:
     image: instrumentisto/rsync-ssh
     restart: always
@@ -47,7 +18,6 @@ services:
   sync_fripon:
     image: sync_fripon:0.1.0
     restart: always
-    command: ["python3", "-u", "/sync_fripon.py", "-d", "30"]  
     # data will be downloaded in the following 2 directories:
     # /prismadata/stations -- detections
     # /prismadata/detections/multiple -- events

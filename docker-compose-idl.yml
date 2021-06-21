@@ -4,7 +4,6 @@ services:
   calibration:
     image: prismadriver:0.1.0
     restart: always
-    command: python3 /astrometry/workspace/calibrate.py
     volumes:
       - /prismadata/stations:/astrometry/workspace/captures
       - /prismadata/detections/multiple:/astrometry/workspace/events

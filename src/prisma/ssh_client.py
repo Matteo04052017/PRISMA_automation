@@ -1,9 +1,8 @@
-import os
-from paramiko.client import SSHClient, AutoAddPolicy
-from stat import S_ISDIR
+from sys import stderr
+from paramiko.client import AutoAddPolicy, SSHClient
+
 
 class PRISMASSHClient:
-
     def __init__(self, address, user=None, passwd=None):
         self.client = SSHClient()
         self.client.set_missing_host_key_policy(AutoAddPolicy())
@@ -18,9 +17,9 @@ class PRISMASSHClient:
 
     def close(self):
         self.client.close()
-        
+
     def list_from_directory(self, directory):
-        stdin, stdout, stderr = self.client.exec_command('ls ' + directory)
+        stdin, stdout, stderr = self.client.exec_command("ls " + directory)
         result = stdout.read().splitlines()
         return result
 

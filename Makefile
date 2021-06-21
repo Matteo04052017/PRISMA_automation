@@ -8,22 +8,16 @@ SYNC_FRIPON_VER=0.1.0
 build_idl:
 	@cd idl && make build && cd ..
 
-submodule:
-	@git submodule update --init --recursive
+# submodule:
+# 	@git submodule update --init --recursive
 
-build_driver: submodule 
+build_driver: 
 	@docker build . -t prismadriver:$(PRISMA_DRIVER_VER) -f docker/Dockerfile.driver
 
-build_prisma_db: submodule
-	@docker build . -t prismadb:$(PRISMA_DB_VER) -f docker/Dockerfile.db
-
-build_webserver: submodule
-	@docker build . -t webserver:$(WEBSERVER_VER) -f docker/Dockerfile.www
-
-build_sync_fripon: submodule
+build_sync_fripon:
 	@docker build . -t sync_fripon:$(SYNC_FRIPON_VER) -f docker/Dockerfile.sync
 
-build: submodule build_idl build_driver build_sync_fripon build_prisma_db build_webserver
+build: build_idl build_driver build_sync_fripon
 
 start_idl:
 	docker-compose -f docker-compose-idl.yml up -d --remove-orphans
@@ -42,3 +36,18 @@ vars:
 	@echo "MYSQL_PASSWORD=$(MYSQL_PASSWORD)"
 	@echo "MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD)"
 
+apply-formatting: # apply formatting with black
+	isort --recursive --profile black src/ tests/
+	black --line-length 79 src/ tests/
+
+unit_test: ## Run simulation mode unit tests
+	@mkdir -p build; \
+	PYTHONPATH=src:src/prisma pytest  $(FILE)
+
+lint: ## Linting src and tests directory
+	@mkdir -p build/reports;
+	isort --recursive --check-only --profile black src/ tests/
+	black --line-length 79 --check src/ tests/
+	flake8 --show-source --statistics src/ tests/
+	pylint --rcfile=.pylintrc --output-format=parseable src/* tests/* | tee build/code_analysis.stdout
+	pylint --output-format=pylint_junit.JUnitReporter src/* tests/* > build/reports/linting-python.xml

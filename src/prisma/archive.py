@@ -1,3 +1,5 @@
+import logging
+
 
 class Camera:
     def __init__(self, camera_name, camera_address):
@@ -8,5 +10,6 @@ class Camera:
 def get_archived_files():
     return []
 
+
 def archive_file(filepath):
-    pass
+    logging.info(filepath)

@@ -1,3 +1,0 @@
-FROM mysql:8
-
-COPY PRISMA_BACKEND/installation_scripts/inaf_prisma_dump.sql /docker-entrypoint-initdb.d/inaf_prisma_dump.sql

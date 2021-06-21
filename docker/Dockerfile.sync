@@ -1,21 +1,16 @@
 FROM ubuntu:20.04
 
 RUN apt-get update && \
-    apt-get install -y libmysqlclient-dev \
-        python3.8 python3-pip python3.8-dev \
-        build-essential
+    apt-get install -y python3.8 python3-pip python3.8-dev 
 
-COPY docker/driver/procedures_config.json /procedures_config.json
-COPY PRISMA_BACKEND/installation_scripts/requirements.txt /requirements.txt 
+COPY idl/astrometry_v1.30/workspace/settings/solutions.ini /solutions.ini
+COPY requirements.txt /requirements.txt 
 
 RUN python3 -m pip install setuptools
 RUN python3 -m pip install -r /requirements.txt 
-RUN python3 -m pip install paramiko
-RUN python3 -m pip install setuptools-rust
 
-COPY ssh_client.py /ssh_client.py
-COPY sync_fripon.py /sync_fripon.py
+COPY src /prisma_repo
 
-CMD ["python3","-u", "/sync_fripon.py"]
+CMD ["python3","-u", "/prisma_repo/run_sync_fripon.py"]
 
 
