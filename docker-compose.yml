@@ -30,6 +30,20 @@ services:
       - /prismadata/settings:/astrometry/workspace/settings
       - /prismadata/astrometry:/astrometry/workspace/astrometry
       - /prismadata/results:/astrometry/workspace/results
+  rsync_captures:
+    image: instrumentisto/rsync-ssh
+    restart: always
+    volumes:
+      - ${HOME}/.ssh:/root/.ssh
+      - /prismadata:/prismadata
+    command: rsync -e "ssh -i /root/.ssh/id_rsa" --progress -r controls@prisma.ia2.inaf.it:/mnt/rsync_captures/ /prismadata/rsync_captures/
+  rsync_events:
+      image: instrumentisto/rsync-ssh
+      restart: always
+      volumes:
+        - ${HOME}/.ssh:/root/.ssh
+        - /prismadata:/prismadata
+      command:  rsync -e "ssh -i /root/.ssh/id_rsa" --progress -r controls@prisma.ia2.inaf.it:/mnt/rsync_events/ /prismadata/rsync_events/
   sync_fripon:
     image: sync_fripon:0.1.0
     restart: always
