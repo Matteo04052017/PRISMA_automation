@@ -25,10 +25,16 @@ build_sync_fripon: submodule
 
 build: submodule build_idl build_driver build_sync_fripon build_prisma_db build_webserver
 
-start:
+start_idl:
+	docker-compose -f docker-compose-idl.yml up -d --remove-orphans
+
+stop_idl:
+	docker-compose -f docker-compose-idl.yml down --remove-orphans
+
+start_sync:
 	docker-compose up -d --remove-orphans
 
-stop:
+stop_sync:
 	docker-compose down --remove-orphans
 
 vars:
