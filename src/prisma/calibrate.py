@@ -1,9 +1,7 @@
 import datetime
-import getopt
 import logging
 import os
 import subprocess
-import sys
 import time
 
 from prisma.settings import get_camera_code, get_days_to_work
@@ -88,6 +86,3 @@ def main_loop():
 
         logger.info("Stop execution at %s", st)
         time.sleep(SLEEP_TIME)
-
-
-

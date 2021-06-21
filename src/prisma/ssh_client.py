@@ -1,4 +1,4 @@
-from sys import stderr
+# pylint: disable=unused-variable
 from paramiko.client import AutoAddPolicy, SSHClient
 
 
