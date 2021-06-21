@@ -6,7 +6,7 @@ PRISMA_DRIVER_VER=0.1.0
 SYNC_FRIPON_VER=0.1.0
 
 clean: 
-	@rm -rf __pycache__/*.pyc venv build .pytest_cache __pycache__ src/*/__pycache__ src/*/*/__pycache__ tests/*/__pycache__ tests/*/*/__pycache__
+	@rm -rf __pycache__/*.pyc venv build .pytest_cache __pycache__ src/*/__pycache__ src/*/*/__pycache__ tests/*/__pycache__ tests/*/*/__pycache__ .coverage
 
 build_idl:
 	@cd idl && make build && cd ..
