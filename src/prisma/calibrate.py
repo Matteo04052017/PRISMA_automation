@@ -1,3 +1,4 @@
+# pylint: disable=unused-variable
 import datetime
 import logging
 import os
@@ -83,9 +84,9 @@ def main_loop():
 
         logger.info(camera_codes)
 
-        res = get_days_to_work(last_n_days)
+        day_capture_directories, month_capture_directories = get_days_to_work(last_n_days)
 
-        calibrate_byday(res.day_capture_directories, camera_codes)
+        calibrate_byday(day_capture_directories, camera_codes)
 
         logger.info("Stop execution at %s", st)
         time.sleep(SLEEP_TIME)
