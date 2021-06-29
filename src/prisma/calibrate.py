@@ -84,7 +84,9 @@ def main_loop():
 
         logger.info(camera_codes)
 
-        day_capture_directories, month_capture_directories = get_days_to_work(last_n_days)
+        day_capture_directories, month_capture_directories = get_days_to_work(
+            last_n_days
+        )
 
         calibrate_byday(day_capture_directories, camera_codes)
 
