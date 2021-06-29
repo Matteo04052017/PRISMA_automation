@@ -45,6 +45,7 @@ def is_calibrated(camera_code, day):
     ]
     for check_file in check_files:
         filename = [camera_code, day, check_file]
+        logger.info("filename %s", filename)
         local_file = "_".join(filename)
         if not os.path.isfile(local_file):
             return False
