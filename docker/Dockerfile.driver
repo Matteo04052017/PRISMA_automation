@@ -6,4 +6,4 @@ RUN apt-get update && \
 
 COPY src /prisma_repo
 
-CMD ["python3","-u", "/astrometry/workspace/run_calibration.py"]
+CMD ["python3","-u", "/prisma_repo/run_calibration.py"]
