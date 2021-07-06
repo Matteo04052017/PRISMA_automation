@@ -104,7 +104,7 @@ def calibrate_byday(day_capture_directories, camera_list):
             separator = " "
             logger.info(separator.join(cmd))
             try:
-                output = subprocess.run(cmd, universal_newlines=True, check=True)
+                output = subprocess.run(cmd, universal_newlines=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 if "Execution halted" in output.stdout:
                     errors.append(error_str)
             except Exception as ex:
