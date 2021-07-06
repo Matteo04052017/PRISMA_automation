@@ -69,7 +69,7 @@ def is_calibrated(camera_code, day):
     for check_file in check_files:
         filename = [camera_code, day, check_file]
         local_file = "_".join(filename)
-        complete_path = f"/astrometry/workspace/astrometry/{camera_code}/{day[0:6]}/{local_file}"
+        complete_path = f"/astrometry/workspace/astrometry/{camera_code}/{day[0:6]}/{local_file}"  # noqa: E501
         if not os.path.isfile(complete_path):
             logger.info("Missing %s for calibration", complete_path)
             return False
@@ -104,7 +104,9 @@ def calibrate_byday(day_capture_directories, camera_list):
             separator = " "
             logger.info(separator.join(cmd))
             try:
-                subprocess.run(cmd, universal_newlines=True, check=True)
+                output = subprocess.run(cmd, universal_newlines=True, check=True)
+                if "Execution halted" in output:
+                    errors.append(error_str)
             except Exception as ex:
                 logger.error("%s", ex)
                 errors.append(error_str)
@@ -132,7 +134,7 @@ def calibrate_bymonth(month_capture_directories, camera_list):
             except Exception as ex:
                 logger.error("%s", ex)
                 errors.append(error_str)
-                errors.append("calibration error for (%s, %s)", c, m)
+                logger.error("calibration error for (%s, %s)", c, m)
 
 
 def main_loop():
