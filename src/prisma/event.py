@@ -18,9 +18,5 @@ ch.setLevel(logging.INFO)
 logger.addHandler(ch)
 
 
-# need to check for the 
-# /prismadata/astrometry/ITER02/202106/ITER02_202106_astro_param.txt
-# /prismadata/astrometry/ITER02/202106/ITER02_202106_astro_sigma.txt
-# /prismadata/astrometry/ITER02/202106/ITER02_202106_photo_param.txt
-# /prismadata/astrometry/ITER02/202106/ITER02_202106_photo_sigma.txt
+
 
