@@ -69,10 +69,9 @@ def is_calibrated(camera_code, day):
     for check_file in check_files:
         filename = [camera_code, day, check_file]
         local_file = "_".join(filename)
-        if not os.path.isfile(
-            "/astrometry/workspace/astrometry/" + local_file
-        ):
-            logger.info("Missing %s for calibration", "/astrometry/workspace/astrometry/" + local_file)
+        complete_path = f"/astrometry/workspace/astrometry/{camera_code}/{day[0:6]}/{local_file}"
+        if not os.path.isfile(complete_path):
+            logger.info("Missing %s for calibration", complete_path)
             return False
     return True
 
