@@ -23,7 +23,7 @@ logger.addHandler(ch)
 # ITCP02_20210614_astro_report.pdf
 # ITCP02_20210614_astro_sigma.txt
 # ITCP02_20210614_astro_solution.txt
-# questi ultimi file sono quelli 
+# questi ultimi file sono quelli
 # da controllare
 # ITCP02_20210614_photo_param.txt
 # ITCP02_20210614_photo_report.pdf
@@ -43,7 +43,7 @@ check_files = [
     "photo_solution.txt",
 ]
 
-# need to check for the following files 
+# need to check for the following files
 # for month to understand if calibrated
 # ITER02_202106_astro_param.txt
 # ITER02_202106_astro_sigma.txt
@@ -103,6 +103,7 @@ def is_month_complete(camera_code, month_str):
             return False
     return True
 
+
 def is_month_calibrated(camera_code, month_str):
     for check_file in check_files_month:
         filename = [camera_code, month_str, check_file]
@@ -131,7 +132,13 @@ def calibrate_byday(day_capture_directories, camera_list):
             separator = " "
             logger.info(separator.join(cmd))
             try:
-                output = subprocess.run(cmd, universal_newlines=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                output = subprocess.run(
+                    cmd,
+                    universal_newlines=True,
+                    check=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
                 logger.info(output.stdout)
                 logger.error(output.stderr)
                 if "Execution halted" in output.stdout:
@@ -139,7 +146,7 @@ def calibrate_byday(day_capture_directories, camera_list):
             except Exception as ex:
                 logger.error("%s", ex)
                 errors.append(error_str)
-                errors.append("calibration error for (%s, %s)", c, d)
+                logger.error("calibration error for (%s, %s)", c, d)
 
 
 def calibrate_bymonth(month_capture_directories, camera_list):
@@ -152,7 +159,9 @@ def calibrate_bymonth(month_capture_directories, camera_list):
                 logger.info("is_month_complete(%s, %s) False. Continue.", c, m)
                 continue
             if is_month_calibrated(c, m):
-                logger.info("is_month_calibrated(%s, %s) True. Continue.", c, m)
+                logger.info(
+                    "is_month_calibrated(%s, %s) True. Continue.", c, m
+                )
                 continue
             cmd = [
                 "bash",
@@ -162,7 +171,13 @@ def calibrate_bymonth(month_capture_directories, camera_list):
             separator = " "
             logger.info(separator.join(cmd))
             try:
-                output = subprocess.run(cmd, universal_newlines=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                output = subprocess.run(
+                    cmd,
+                    universal_newlines=True,
+                    check=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
                 logger.info(output.stdout)
                 logger.error(output.stderr)
                 if "Execution halted" in output.stdout:
