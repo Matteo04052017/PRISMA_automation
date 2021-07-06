@@ -48,7 +48,7 @@ def is_calibrated(camera_code, day):
         filename = [camera_code, day, check_file]
         logger.info("filename %s", filename)
         local_file = "_".join(filename)
-        if not os.path.isfile(local_file):
+        if not os.path.isfile("/astrometry/workspace/astrometry/" + local_file):
             return False
     return True
 
@@ -57,6 +57,7 @@ def calibrate_byday(day_capture_directories, camera_list):
     for c in camera_list:
         for d in day_capture_directories:
             if is_calibrated(c, d):
+                logger.info("is_calibrated(%s, %s) True", c, d)
                 continue
             cmd = [
                 "bash",
