@@ -118,8 +118,8 @@ def calibrate_bymonth(month_capture_directories, camera_list):
             error_str = "(%s, %s)", c, m
             if error_str in errors:
                 continue
-            if is_month_complete(c, m):
-                logger.info("is_month_complete(%s, %s) True", c, m)
+            if not is_month_complete(c, m):
+                logger.info("is_month_complete(%s, %s) False", c, m)
                 continue
             cmd = [
                 "bash",
