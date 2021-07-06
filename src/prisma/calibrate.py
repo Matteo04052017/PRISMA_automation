@@ -43,6 +43,21 @@ check_files = [
     "photo_solution.txt",
 ]
 
+# need to check for the following files 
+# for month to understand if calibrated
+# ITER02_202106_astro_param.txt
+# ITER02_202106_astro_sigma.txt
+# ITER02_202106_photo_param.txt
+# ITER02_202106_photo_sigma.txt
+check_files_month = [
+    "photo_param.txt",
+    "photo_sigma.txt",
+    # not sure of the below
+    # "astro_sigma.txt",
+    # "astro_param.txt"
+]
+
+
 last_n_days = 30
 errors = []
 
@@ -73,7 +88,7 @@ def is_calibrated(camera_code, day):
         local_file = "_".join(filename)
         complete_path = f"/astrometry/workspace/astrometry/{camera_code}/{day[0:6]}/{local_file}"  # noqa: E501
         if not os.path.isfile(complete_path):
-            logger.info("Missing %s for calibration", complete_path)
+            logger.info("Missing %s for daily calibration", complete_path)
             return False
     return True
 
@@ -88,6 +103,16 @@ def is_month_complete(camera_code, month_str):
             return False
     return True
 
+def is_month_calibrated(camera_code, month_str):
+    for check_file in check_files_month:
+        filename = [camera_code, month_str, check_file]
+        local_file = "_".join(filename)
+        complete_path = f"/astrometry/workspace/astrometry/{camera_code}/{month_str}/{local_file}"  # noqa: E501
+        if not os.path.isfile(complete_path):
+            logger.info("Missing %s for monthly calibration", complete_path)
+            return False
+    return True
+
 
 def calibrate_byday(day_capture_directories, camera_list):
     for c in camera_list:
@@ -96,7 +121,7 @@ def calibrate_byday(day_capture_directories, camera_list):
             if error_str in errors:
                 continue
             if is_calibrated(c, d):
-                logger.info("is_calibrated(%s, %s) True", c, d)
+                logger.info("is_calibrated(%s, %s) True. Continue.", c, d)
                 continue
             cmd = [
                 "bash",
@@ -124,7 +149,10 @@ def calibrate_bymonth(month_capture_directories, camera_list):
             if error_str in errors:
                 continue
             if not is_month_complete(c, m):
-                logger.info("is_month_complete(%s, %s) False", c, m)
+                logger.info("is_month_complete(%s, %s) False. Continue.", c, m)
+                continue
+            if is_month_calibrated(c, m):
+                logger.info("is_month_calibrated(%s, %s) True. Continue.", c, m)
                 continue
             cmd = [
                 "bash",
