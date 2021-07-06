@@ -23,18 +23,20 @@ logger.addHandler(ch)
 # ITCP02_20210614_astro_report.pdf
 # ITCP02_20210614_astro_sigma.txt
 # ITCP02_20210614_astro_solution.txt
+# questi ultimi file sono quelli 
+# da controllare
 # ITCP02_20210614_photo_param.txt
 # ITCP02_20210614_photo_report.pdf
 # ITCP02_20210614_photo_sigma.txt
 # ITCP02_20210614_photo_solution.txt
 check_files = [
-    "assoc.txt",
-    "astro_covar.txt",
-    "astro_error.txt",
-    "astro_param.txt",
-    "astro_report.pdf",
-    "astro_sigma.txt",
-    "astro_solution.txt",
+    # "assoc.txt",
+    # "astro_covar.txt",
+    # "astro_error.txt",
+    # "astro_param.txt",
+    # "astro_report.pdf",
+    # "astro_sigma.txt",
+    # "astro_solution.txt",
     "photo_param.txt",
     "photo_report.pdf",
     "photo_sigma.txt",
@@ -132,7 +134,11 @@ def calibrate_bymonth(month_capture_directories, camera_list):
             separator = " "
             logger.info(separator.join(cmd))
             try:
-                subprocess.run(cmd, universal_newlines=True, check=True)
+                output = subprocess.run(cmd, universal_newlines=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                logger.info(output.stdout)
+                logger.error(output.stderr)
+                if "Execution halted" in output.stdout:
+                    errors.append(error_str)
             except Exception as ex:
                 logger.error("%s", ex)
                 errors.append(error_str)
