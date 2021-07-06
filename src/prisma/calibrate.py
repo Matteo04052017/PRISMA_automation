@@ -17,6 +17,7 @@ ch.setLevel(logging.INFO)
 logger.addHandler(ch)
 
 last_n_days = 30
+errors = []
 
 
 def is_calibrated(camera_code, day):
@@ -48,7 +49,9 @@ def is_calibrated(camera_code, day):
         filename = [camera_code, day, check_file]
         logger.info("filename %s", filename)
         local_file = "_".join(filename)
-        if not os.path.isfile("/astrometry/workspace/astrometry/" + local_file):
+        if not os.path.isfile(
+            "/astrometry/workspace/astrometry/" + local_file
+        ):
             return False
     return True
 
@@ -56,6 +59,9 @@ def is_calibrated(camera_code, day):
 def calibrate_byday(day_capture_directories, camera_list):
     for c in camera_list:
         for d in day_capture_directories:
+            error_str = "(%s, %s)", c, d
+            if error_str in errors:
+                continue
             if is_calibrated(c, d):
                 logger.info("is_calibrated(%s, %s) True", c, d)
                 continue
@@ -70,6 +76,8 @@ def calibrate_byday(day_capture_directories, camera_list):
                 subprocess.run(cmd, universal_newlines=True, check=True)
             except Exception as ex:
                 logger.error("%s", ex)
+                errors.append(error_str)
+                errors.append("calibration error for (%s, %s)", c, d)
 
 
 def main_loop():
